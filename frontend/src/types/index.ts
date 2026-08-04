@@ -23,3 +23,44 @@ export interface ApiError {
   message: string | string[];
   timestamp: string;
 }
+
+export type SchoolType = 'MATERNELLE' | 'ELEMENTAIRE' | 'PRIMAIRE';
+
+export interface School {
+  id: string;
+  name: string;
+  address: string | null;
+  city: string | null;
+  postalCode: string | null;
+  phone: string | null;
+  email: string | null;
+  uaiCode: string | null;
+  type: SchoolType;
+  isArchived: boolean;
+  createdAt: string;
+  updatedAt: string;
+  schoolYears?: SchoolYear[];
+}
+
+export interface SchoolYear {
+  id: string;
+  schoolId: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  isCurrent: boolean;
+  createdAt: string;
+  updatedAt: string;
+  periods?: Period[];
+}
+
+export interface Period {
+  id: string;
+  schoolYearId: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}

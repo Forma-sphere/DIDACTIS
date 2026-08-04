@@ -6,7 +6,8 @@ import { ChevronRight } from 'lucide-react';
 
 const labels: Record<string, string> = {
   dashboard: 'Tableau de bord',
-  schools: 'École',
+  schools: 'Écoles',
+  new: 'Nouveau',
   users: 'Utilisateurs',
   classes: 'Classes',
   students: 'Élèves',
