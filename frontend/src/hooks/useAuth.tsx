@@ -11,9 +11,20 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (data: { email: string; password: string; firstName: string; lastName: string }) => Promise<void>;
   logout: () => void;
+  resendVerification: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
+
+function setTokens(accessToken: string, refreshToken: string) {
+  Cookies.set('token', accessToken, { expires: 1 });
+  Cookies.set('refreshToken', refreshToken, { expires: 30 });
+}
+
+function clearTokens() {
+  Cookies.remove('token');
+  Cookies.remove('refreshToken');
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -29,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data } = await api.get<User>('/auth/me');
       setUser(data);
     } catch {
-      Cookies.remove('token');
+      clearTokens();
     } finally {
       setLoading(false);
     }
@@ -41,24 +52,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const { data } = await api.post<AuthResponse>('/auth/login', { email, password });
-    Cookies.set('token', data.token, { expires: 7 });
+    setTokens(data.accessToken, data.refreshToken);
     setUser(data.user);
   };
 
   const register = async (payload: { email: string; password: string; firstName: string; lastName: string }) => {
     const { data } = await api.post<AuthResponse>('/auth/register', payload);
-    Cookies.set('token', data.token, { expires: 7 });
+    setTokens(data.accessToken, data.refreshToken);
     setUser(data.user);
   };
 
-  const logout = () => {
-    Cookies.remove('token');
+  const logout = async () => {
+    const refreshToken = Cookies.get('refreshToken');
+    if (refreshToken) {
+      try { await api.post('/auth/logout', { refreshToken }); } catch { /* ignore */ }
+    }
+    clearTokens();
     setUser(null);
     window.location.href = '/login';
   };
 
+  const resendVerification = async () => {
+    await api.post('/auth/resend-verification');
+    return;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, resendVerification }}>
       {children}
     </AuthContext.Provider>
   );

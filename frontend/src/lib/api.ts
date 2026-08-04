@@ -13,13 +13,62 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+let isRefreshing = false;
+let pendingRequests: Array<(token: string) => void> = [];
+
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401 && typeof window !== 'undefined') {
-      Cookies.remove('token');
-      window.location.href = '/login';
+  async (error) => {
+    const original = error.config;
+
+    if (error.response?.status !== 401 || original._retry || original.url?.includes('/auth/')) {
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
+
+    if (isRefreshing) {
+      return new Promise((resolve) => {
+        pendingRequests.push((token: string) => {
+          original.headers.Authorization = `Bearer ${token}`;
+          resolve(api(original));
+        });
+      });
+    }
+
+    original._retry = true;
+    isRefreshing = true;
+
+    const refreshToken = Cookies.get('refreshToken');
+    if (!refreshToken) {
+      clearAuth();
+      return Promise.reject(error);
+    }
+
+    try {
+      const { data } = await axios.post(
+        `${api.defaults.baseURL}/auth/refresh`,
+        { refreshToken },
+      );
+      Cookies.set('token', data.accessToken, { expires: 1 });
+      Cookies.set('refreshToken', data.refreshToken, { expires: 30 });
+
+      pendingRequests.forEach((cb) => cb(data.accessToken));
+      pendingRequests = [];
+
+      original.headers.Authorization = `Bearer ${data.accessToken}`;
+      return api(original);
+    } catch {
+      clearAuth();
+      return Promise.reject(error);
+    } finally {
+      isRefreshing = false;
+    }
   },
 );
+
+function clearAuth() {
+  Cookies.remove('token');
+  Cookies.remove('refreshToken');
+  if (typeof window !== 'undefined') {
+    window.location.href = '/login';
+  }
+}

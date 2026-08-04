@@ -7,13 +7,15 @@ export interface User {
   lastName: string;
   role: Role;
   isActive: boolean;
+  emailVerified: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface AuthResponse {
   user: User;
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 }
 
 export interface ApiError {

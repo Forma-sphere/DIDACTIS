@@ -19,6 +19,7 @@ export class UsersService {
         lastName: true,
         role: true,
         isActive: true,
+        emailVerified: true,
         createdAt: true,
       },
     });
@@ -30,5 +31,9 @@ export class UsersService {
 
   findByEmail(email: string) {
     return this.prisma.user.findUnique({ where: { email } });
+  }
+
+  update(id: string, data: Prisma.UserUpdateInput) {
+    return this.prisma.user.update({ where: { id }, data });
   }
 }
