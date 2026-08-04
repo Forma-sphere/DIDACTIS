@@ -31,6 +31,7 @@ model User {
   createdAt              DateTime       @default(now()) @map("created_at")
   updatedAt              DateTime       @updatedAt @map("updated_at")
   refreshTokens          RefreshToken[]
+  classes                Class[]        @relation("ClassTeacher")
 
   @@map("users")
 }
@@ -67,6 +68,7 @@ model School {
   updatedAt   DateTime     @updatedAt @map("updated_at")
   schoolYears SchoolYear[]
   users       User[]
+  classes     Class[]
 
   @@map("schools")
 }
@@ -82,6 +84,7 @@ model SchoolYear {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   periods   Period[]
+  classes   Class[]
 
   @@map("school_years")
 }
@@ -98,4 +101,41 @@ model Period {
   updatedAt    DateTime   @updatedAt @map("updated_at")
 
   @@map("periods")
+}
+
+enum Level {
+  TPS
+  PS
+  MS
+  GS
+  CP
+  CE1
+  CE2
+  CM1
+  CM2
+}
+
+enum Cycle {
+  CYCLE_1
+  CYCLE_2
+  CYCLE_3
+}
+
+model Class {
+  id           String     @id @default(uuid()) @db.Uuid
+  schoolId     String     @map("school_id") @db.Uuid
+  school       School     @relation(fields: [schoolId], references: [id])
+  schoolYearId String     @map("school_year_id") @db.Uuid
+  schoolYear   SchoolYear @relation(fields: [schoolYearId], references: [id])
+  teacherId    String     @map("teacher_id") @db.Uuid
+  teacher      User       @relation("ClassTeacher", fields: [teacherId], references: [id])
+  name         String
+  level        Level
+  cycle        Cycle
+  capacity     Int        @default(30)
+  isArchived   Boolean    @default(false) @map("is_archived")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@map("classes")
 }

@@ -75,3 +75,24 @@ export interface Period {
   createdAt: string;
   updatedAt: string;
 }
+
+export type Level = 'TPS' | 'PS' | 'MS' | 'GS' | 'CP' | 'CE1' | 'CE2' | 'CM1' | 'CM2';
+
+export type Cycle = 'CYCLE_1' | 'CYCLE_2' | 'CYCLE_3';
+
+export interface ClassItem {
+  id: string;
+  name: string;
+  schoolId: string;
+  school?: { id: string; name: string };
+  schoolYearId: string;
+  schoolYear?: { id: string; name: string };
+  teacherId: string;
+  teacher?: { id: string; firstName: string; lastName: string; email: string };
+  level: Level;
+  cycle: Cycle;
+  capacity: number;
+  isArchived: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
