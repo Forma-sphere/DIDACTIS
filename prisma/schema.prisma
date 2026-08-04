@@ -19,7 +19,10 @@ model User {
   password               String
   firstName              String         @map("first_name")
   lastName               String         @map("last_name")
+  phone                  String?
   role                   Role           @default(TEACHER)
+  schoolId               String?        @map("school_id") @db.Uuid
+  school                 School?        @relation(fields: [schoolId], references: [id])
   isActive               Boolean        @default(true) @map("is_active")
   emailVerified          Boolean        @default(false) @map("email_verified")
   emailVerificationToken String?        @map("email_verification_token")
@@ -63,6 +66,7 @@ model School {
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
   schoolYears SchoolYear[]
+  users       User[]
 
   @@map("schools")
 }

@@ -5,11 +5,22 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
+  phone: string | null;
   role: Role;
+  schoolId: string | null;
+  school?: { id: string; name: string } | null;
   isActive: boolean;
   emailVerified: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 export interface AuthResponse {
