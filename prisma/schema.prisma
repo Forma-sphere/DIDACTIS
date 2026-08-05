@@ -147,6 +147,7 @@ model Class {
   students     Student[]
   progressions Progression[]
   lessons      Lesson[]
+  journalDays  JournalDay[]
 
   @@map("classes")
 }
@@ -256,6 +257,7 @@ model Lesson {
   createdAt    DateTime            @default(now()) @map("created_at")
   updatedAt    DateTime            @updatedAt @map("updated_at")
   competencies LessonCompetency[]
+  journalLessons JournalLesson[]
 
   @@map("lessons")
 }
@@ -268,4 +270,31 @@ model LessonCompetency {
 
   @@id([lessonId, competencyId])
   @@map("lesson_competencies")
+}
+
+model JournalDay {
+  id        String          @id @default(uuid()) @db.Uuid
+  classId   String          @map("class_id") @db.Uuid
+  class     Class           @relation(fields: [classId], references: [id])
+  date      DateTime        @db.Date
+  notes     String?         @db.Text
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+  lessons   JournalLesson[]
+
+  @@unique([classId, date])
+  @@map("journal_days")
+}
+
+model JournalLesson {
+  journalDayId String     @map("journal_day_id") @db.Uuid
+  journalDay   JournalDay @relation(fields: [journalDayId], references: [id], onDelete: Cascade)
+  lessonId     String     @map("lesson_id") @db.Uuid
+  lesson       Lesson     @relation(fields: [lessonId], references: [id])
+  startTime    String     @map("start_time")
+  endTime      String     @map("end_time")
+  order        Int        @default(0)
+
+  @@id([journalDayId, lessonId])
+  @@map("journal_lessons")
 }

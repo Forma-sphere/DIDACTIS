@@ -10,6 +10,7 @@ import { CompetenciesModule } from './competencies/competencies.module';
 import { ProgressionsModule } from './progressions/progressions.module';
 import { SequencesModule } from './sequences/sequences.module';
 import { LessonsModule } from './lessons/lessons.module';
+import { JournalModule } from './journal/journal.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { LessonsModule } from './lessons/lessons.module';
     ProgressionsModule,
     SequencesModule,
     LessonsModule,
+    JournalModule,
   ],
 })
 export class AppModule {}

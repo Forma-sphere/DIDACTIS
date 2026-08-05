@@ -191,6 +191,31 @@ export interface Lesson {
   updatedAt: string;
 }
 
+export interface JournalLesson {
+  lessonId: string;
+  startTime: string;
+  endTime: string;
+  order: number;
+  lesson: {
+    id: string; title: string; duration: number;
+    sequence?: { id: string; title: string };
+  };
+}
+
+export interface JournalDay {
+  id: string;
+  classId: string;
+  class?: {
+    id: string; name: string; level: Level; cycle: Cycle;
+    teacher?: { id: string; firstName: string; lastName: string };
+  };
+  date: string;
+  notes: string | null;
+  lessons: JournalLesson[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ClassItem {
   id: string;
   name: string;
