@@ -177,6 +177,7 @@ model Competency {
   createdAt   DateTime                @default(now()) @map("created_at")
   updatedAt   DateTime                @updatedAt @map("updated_at")
   progressions ProgressionCompetency[]
+  sequences    SequenceCompetency[]
 
   @@map("competencies")
 }
@@ -195,6 +196,7 @@ model Progression {
   createdAt    DateTime                @default(now()) @map("created_at")
   updatedAt    DateTime                @updatedAt @map("updated_at")
   competencies ProgressionCompetency[]
+  sequences    Sequence[]
 
   @@map("progressions")
 }
@@ -208,4 +210,30 @@ model ProgressionCompetency {
 
   @@id([progressionId, competencyId])
   @@map("progression_competencies")
+}
+
+model Sequence {
+  id            String               @id @default(uuid()) @db.Uuid
+  progressionId String               @map("progression_id") @db.Uuid
+  progression   Progression          @relation(fields: [progressionId], references: [id])
+  title         String
+  description   String?              @db.Text
+  order         Int                  @default(0)
+  isArchived    Boolean              @default(false) @map("is_archived")
+  createdAt     DateTime             @default(now()) @map("created_at")
+  updatedAt     DateTime             @updatedAt @map("updated_at")
+  competencies  SequenceCompetency[]
+
+  @@map("sequences")
+}
+
+model SequenceCompetency {
+  sequenceId   String     @map("sequence_id") @db.Uuid
+  sequence     Sequence   @relation(fields: [sequenceId], references: [id], onDelete: Cascade)
+  competencyId String     @map("competency_id") @db.Uuid
+  competency   Competency @relation(fields: [competencyId], references: [id])
+  order        Int        @default(0)
+
+  @@id([sequenceId, competencyId])
+  @@map("sequence_competencies")
 }

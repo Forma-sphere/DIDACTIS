@@ -136,6 +136,30 @@ export interface Progression {
   updatedAt: string;
 }
 
+export interface SequenceCompetency {
+  competencyId: string;
+  order: number;
+  competency: { id: string; code: string; name: string; domain: string };
+}
+
+export interface Sequence {
+  id: string;
+  progressionId: string;
+  progression?: {
+    id: string; title: string;
+    school?: { id: string; name: string };
+    class?: { id: string; name: string };
+    schoolYear?: { id: string; name: string };
+  };
+  title: string;
+  description: string | null;
+  order: number;
+  competencies: SequenceCompetency[];
+  isArchived: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ClassItem {
   id: string;
   name: string;
