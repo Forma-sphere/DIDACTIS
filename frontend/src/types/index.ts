@@ -111,6 +111,31 @@ export interface Competency {
   updatedAt: string;
 }
 
+export interface ProgressionCompetency {
+  competencyId: string;
+  order: number;
+  competency: { id: string; code: string; name: string; domain: string };
+}
+
+export interface Progression {
+  id: string;
+  schoolId: string;
+  school?: { id: string; name: string };
+  classId: string;
+  class?: { id: string; name: string; level: Level; cycle: Cycle };
+  schoolYearId: string;
+  schoolYear?: {
+    id: string; name: string;
+    periods?: Period[];
+  };
+  title: string;
+  description: string | null;
+  competencies: ProgressionCompetency[];
+  isArchived: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ClassItem {
   id: string;
   name: string;

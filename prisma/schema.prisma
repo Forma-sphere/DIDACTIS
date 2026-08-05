@@ -66,10 +66,11 @@ model School {
   isArchived  Boolean      @default(false) @map("is_archived")
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
-  schoolYears SchoolYear[]
-  users       User[]
-  classes     Class[]
-  students    Student[]
+  schoolYears  SchoolYear[]
+  users        User[]
+  classes      Class[]
+  students     Student[]
+  progressions Progression[]
 
   @@map("schools")
 }
@@ -84,8 +85,9 @@ model SchoolYear {
   isCurrent Boolean  @default(false) @map("is_current")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  periods   Period[]
-  classes   Class[]
+  periods      Period[]
+  classes      Class[]
+  progressions Progression[]
 
   @@map("school_years")
 }
@@ -139,10 +141,11 @@ model Class {
   level        Level
   cycle        Cycle
   capacity     Int        @default(30)
-  isArchived   Boolean    @default(false) @map("is_archived")
-  createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
+  isArchived   Boolean       @default(false) @map("is_archived")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
   students     Student[]
+  progressions Progression[]
 
   @@map("classes")
 }
@@ -165,14 +168,44 @@ model Student {
 }
 
 model Competency {
-  id          String   @id @default(uuid()) @db.Uuid
-  code        String   @unique
+  id          String                  @id @default(uuid()) @db.Uuid
+  code        String                  @unique
   name        String
   domain      String
-  description String?  @db.Text
-  isArchived  Boolean  @default(false) @map("is_archived")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  description String?                 @db.Text
+  isArchived  Boolean                 @default(false) @map("is_archived")
+  createdAt   DateTime                @default(now()) @map("created_at")
+  updatedAt   DateTime                @updatedAt @map("updated_at")
+  progressions ProgressionCompetency[]
 
   @@map("competencies")
+}
+
+model Progression {
+  id           String                  @id @default(uuid()) @db.Uuid
+  schoolId     String                  @map("school_id") @db.Uuid
+  school       School                  @relation(fields: [schoolId], references: [id])
+  classId      String                  @map("class_id") @db.Uuid
+  class        Class                   @relation(fields: [classId], references: [id])
+  schoolYearId String                  @map("school_year_id") @db.Uuid
+  schoolYear   SchoolYear              @relation(fields: [schoolYearId], references: [id])
+  title        String
+  description  String?                 @db.Text
+  isArchived   Boolean                 @default(false) @map("is_archived")
+  createdAt    DateTime                @default(now()) @map("created_at")
+  updatedAt    DateTime                @updatedAt @map("updated_at")
+  competencies ProgressionCompetency[]
+
+  @@map("progressions")
+}
+
+model ProgressionCompetency {
+  progressionId String     @map("progression_id") @db.Uuid
+  progression   Progression @relation(fields: [progressionId], references: [id], onDelete: Cascade)
+  competencyId  String     @map("competency_id") @db.Uuid
+  competency    Competency @relation(fields: [competencyId], references: [id])
+  order         Int        @default(0)
+
+  @@id([progressionId, competencyId])
+  @@map("progression_competencies")
 }
