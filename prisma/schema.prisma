@@ -146,6 +146,7 @@ model Class {
   updatedAt    DateTime      @updatedAt @map("updated_at")
   students     Student[]
   progressions Progression[]
+  lessons      Lesson[]
 
   @@map("classes")
 }
@@ -178,6 +179,7 @@ model Competency {
   updatedAt   DateTime                @updatedAt @map("updated_at")
   progressions ProgressionCompetency[]
   sequences    SequenceCompetency[]
+  lessons      LessonCompetency[]
 
   @@map("competencies")
 }
@@ -223,6 +225,7 @@ model Sequence {
   createdAt     DateTime             @default(now()) @map("created_at")
   updatedAt     DateTime             @updatedAt @map("updated_at")
   competencies  SequenceCompetency[]
+  lessons       Lesson[]
 
   @@map("sequences")
 }
@@ -236,4 +239,33 @@ model SequenceCompetency {
 
   @@id([sequenceId, competencyId])
   @@map("sequence_competencies")
+}
+
+model Lesson {
+  id           String              @id @default(uuid()) @db.Uuid
+  sequenceId   String              @map("sequence_id") @db.Uuid
+  sequence     Sequence            @relation(fields: [sequenceId], references: [id])
+  classId      String              @map("class_id") @db.Uuid
+  class        Class               @relation(fields: [classId], references: [id])
+  title        String
+  objective    String              @db.Text
+  content      String              @db.Text
+  duration     Int
+  order        Int                 @default(0)
+  isArchived   Boolean             @default(false) @map("is_archived")
+  createdAt    DateTime            @default(now()) @map("created_at")
+  updatedAt    DateTime            @updatedAt @map("updated_at")
+  competencies LessonCompetency[]
+
+  @@map("lessons")
+}
+
+model LessonCompetency {
+  lessonId     String     @map("lesson_id") @db.Uuid
+  lesson       Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  competencyId String     @map("competency_id") @db.Uuid
+  competency   Competency @relation(fields: [competencyId], references: [id])
+
+  @@id([lessonId, competencyId])
+  @@map("lesson_competencies")
 }

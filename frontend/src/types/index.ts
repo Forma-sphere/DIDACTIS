@@ -160,6 +160,37 @@ export interface Sequence {
   updatedAt: string;
 }
 
+export interface LessonCompetency {
+  competencyId: string;
+  competency: { id: string; code: string; name: string; domain: string };
+}
+
+export interface Lesson {
+  id: string;
+  sequenceId: string;
+  sequence?: {
+    id: string; title: string;
+    progression?: {
+      id: string; title: string;
+      school?: { id: string; name: string };
+    };
+  };
+  classId: string;
+  class?: {
+    id: string; name: string; level: Level; cycle: Cycle;
+    teacher?: { id: string; firstName: string; lastName: string };
+  };
+  title: string;
+  objective: string;
+  content: string;
+  duration: number;
+  order: number;
+  competencies: LessonCompetency[];
+  isArchived: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ClassItem {
   id: string;
   name: string;
