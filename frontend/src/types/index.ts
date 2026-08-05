@@ -100,6 +100,17 @@ export interface Student {
   updatedAt: string;
 }
 
+export interface Competency {
+  id: string;
+  code: string;
+  name: string;
+  domain: string;
+  description: string | null;
+  isArchived: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ClassItem {
   id: string;
   name: string;

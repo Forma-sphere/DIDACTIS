@@ -163,3 +163,16 @@ model Student {
 
   @@map("students")
 }
+
+model Competency {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique
+  name        String
+  domain      String
+  description String?  @db.Text
+  isArchived  Boolean  @default(false) @map("is_archived")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("competencies")
+}
