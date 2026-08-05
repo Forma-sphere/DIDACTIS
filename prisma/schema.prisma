@@ -258,6 +258,7 @@ model Lesson {
   updatedAt    DateTime            @updatedAt @map("updated_at")
   competencies LessonCompetency[]
   journalLessons JournalLesson[]
+  resources      LessonResource[]
 
   @@map("lessons")
 }
@@ -297,4 +298,37 @@ model JournalLesson {
 
   @@id([journalDayId, lessonId])
   @@map("journal_lessons")
+}
+
+enum ResourceType {
+  PDF
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+  OTHER
+}
+
+model Resource {
+  id          String           @id @default(uuid()) @db.Uuid
+  title       String
+  description String?          @db.Text
+  type        ResourceType
+  filePath    String           @map("file_path")
+  tags        String[]         @default([])
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  lessons     LessonResource[]
+
+  @@map("resources")
+}
+
+model LessonResource {
+  lessonId   String   @map("lesson_id") @db.Uuid
+  lesson     Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  resourceId String   @map("resource_id") @db.Uuid
+  resource   Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@id([lessonId, resourceId])
+  @@map("lesson_resources")
 }

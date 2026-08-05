@@ -216,6 +216,26 @@ export interface JournalDay {
   updatedAt: string;
 }
 
+export type ResourceType = 'PDF' | 'IMAGE' | 'VIDEO' | 'AUDIO' | 'DOCUMENT' | 'OTHER';
+
+export interface LessonResource {
+  lessonId: string;
+  resourceId: string;
+  lesson: { id: string; title: string };
+}
+
+export interface Resource {
+  id: string;
+  title: string;
+  description: string | null;
+  type: ResourceType;
+  filePath: string;
+  tags: string[];
+  lessons: LessonResource[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ClassItem {
   id: string;
   name: string;

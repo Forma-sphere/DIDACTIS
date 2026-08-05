@@ -11,10 +11,17 @@ import { ProgressionsModule } from './progressions/progressions.module';
 import { SequencesModule } from './sequences/sequences.module';
 import { LessonsModule } from './lessons/lessons.module';
 import { JournalModule } from './journal/journal.module';
+import { ResourcesModule } from './resources/resources.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '../.env' }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
     PrismaModule,
     AuthModule,
     UsersModule,
@@ -26,6 +33,7 @@ import { JournalModule } from './journal/journal.module';
     SequencesModule,
     LessonsModule,
     JournalModule,
+    ResourcesModule,
   ],
 })
 export class AppModule {}
