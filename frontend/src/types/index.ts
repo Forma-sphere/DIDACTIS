@@ -80,6 +80,26 @@ export type Level = 'TPS' | 'PS' | 'MS' | 'GS' | 'CP' | 'CE1' | 'CE2' | 'CM1' | 
 
 export type Cycle = 'CYCLE_1' | 'CYCLE_2' | 'CYCLE_3';
 
+export type Gender = 'M' | 'F';
+
+export interface Student {
+  id: string;
+  schoolId: string;
+  school?: { id: string; name: string };
+  classId: string;
+  class?: {
+    id: string; name: string; level: Level; cycle: Cycle;
+    teacher?: { id: string; firstName: string; lastName: string };
+  };
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+  gender: Gender;
+  isArchived: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ClassItem {
   id: string;
   name: string;

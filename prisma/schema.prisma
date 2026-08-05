@@ -69,6 +69,7 @@ model School {
   schoolYears SchoolYear[]
   users       User[]
   classes     Class[]
+  students    Student[]
 
   @@map("schools")
 }
@@ -101,6 +102,11 @@ model Period {
   updatedAt    DateTime   @updatedAt @map("updated_at")
 
   @@map("periods")
+}
+
+enum Gender {
+  M
+  F
 }
 
 enum Level {
@@ -136,6 +142,24 @@ model Class {
   isArchived   Boolean    @default(false) @map("is_archived")
   createdAt    DateTime   @default(now()) @map("created_at")
   updatedAt    DateTime   @updatedAt @map("updated_at")
+  students     Student[]
 
   @@map("classes")
+}
+
+model Student {
+  id         String   @id @default(uuid()) @db.Uuid
+  schoolId   String   @map("school_id") @db.Uuid
+  school     School   @relation(fields: [schoolId], references: [id])
+  classId    String   @map("class_id") @db.Uuid
+  class      Class    @relation(fields: [classId], references: [id])
+  firstName  String   @map("first_name")
+  lastName   String   @map("last_name")
+  birthDate  DateTime @map("birth_date") @db.Date
+  gender     Gender
+  isArchived Boolean  @default(false) @map("is_archived")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("students")
 }
