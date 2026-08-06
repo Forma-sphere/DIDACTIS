@@ -289,6 +289,34 @@ export interface DocumentItem {
   createdAt: string;
 }
 
+export type MessageRole = 'USER' | 'ASSISTANT';
+
+export interface Message {
+  id: string;
+  conversationId: string;
+  role: MessageRole;
+  content: string;
+  createdAt: string;
+}
+
+export interface Conversation {
+  id: string;
+  userId: string;
+  title: string;
+  messages: Message[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ConversationListItem {
+  id: string;
+  userId: string;
+  title: string;
+  messages: Message[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ClassItem {
   id: string;
   name: string;
