@@ -273,6 +273,22 @@ export interface Assessment {
   updatedAt: string;
 }
 
+export type DocumentType = 'PDF' | 'WORD';
+
+export type SourceModule = 'LESSON' | 'SEQUENCE' | 'PROGRESSION' | 'JOURNAL' | 'ASSESSMENT';
+
+export interface DocumentItem {
+  id: string;
+  title: string;
+  type: DocumentType;
+  sourceModule: SourceModule;
+  sourceId: string;
+  filePath: string;
+  createdById: string;
+  createdBy: { id: string; firstName: string; lastName: string; email: string };
+  createdAt: string;
+}
+
 export interface ClassItem {
   id: string;
   name: string;

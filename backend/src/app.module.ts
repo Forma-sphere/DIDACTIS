@@ -13,6 +13,7 @@ import { LessonsModule } from './lessons/lessons.module';
 import { JournalModule } from './journal/journal.module';
 import { ResourcesModule } from './resources/resources.module';
 import { AssessmentsModule } from './assessments/assessments.module';
+import { DocumentsModule } from './documents/documents.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
@@ -36,6 +37,7 @@ import { join } from 'path';
     JournalModule,
     ResourcesModule,
     AssessmentsModule,
+    DocumentsModule,
   ],
 })
 export class AppModule {}
