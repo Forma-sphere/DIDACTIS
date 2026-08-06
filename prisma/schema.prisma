@@ -148,6 +148,7 @@ model Class {
   progressions Progression[]
   lessons      Lesson[]
   journalDays  JournalDay[]
+  assessments  Assessment[]
 
   @@map("classes")
 }
@@ -162,9 +163,10 @@ model Student {
   lastName   String   @map("last_name")
   birthDate  DateTime @map("birth_date") @db.Date
   gender     Gender
-  isArchived Boolean  @default(false) @map("is_archived")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  isArchived        Boolean            @default(false) @map("is_archived")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  assessmentResults AssessmentResult[]
 
   @@map("students")
 }
@@ -181,6 +183,8 @@ model Competency {
   progressions ProgressionCompetency[]
   sequences    SequenceCompetency[]
   lessons      LessonCompetency[]
+  assessments  AssessmentCompetency[]
+  assessmentResults AssessmentResult[]
 
   @@map("competencies")
 }
@@ -331,4 +335,54 @@ model LessonResource {
 
   @@id([lessonId, resourceId])
   @@map("lesson_resources")
+}
+
+enum AssessmentStatus {
+  NOT_EVALUATED
+  IN_PROGRESS
+  ACQUIRED
+  EXCEEDED
+}
+
+model Assessment {
+  id           String                 @id @default(uuid()) @db.Uuid
+  classId      String                 @map("class_id") @db.Uuid
+  class        Class                  @relation(fields: [classId], references: [id])
+  title        String
+  description  String?                @db.Text
+  date         DateTime               @db.Date
+  isArchived   Boolean                @default(false) @map("is_archived")
+  createdAt    DateTime               @default(now()) @map("created_at")
+  updatedAt    DateTime               @updatedAt @map("updated_at")
+  competencies AssessmentCompetency[]
+  results      AssessmentResult[]
+
+  @@map("assessments")
+}
+
+model AssessmentCompetency {
+  assessmentId String     @map("assessment_id") @db.Uuid
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  competencyId String     @map("competency_id") @db.Uuid
+  competency   Competency @relation(fields: [competencyId], references: [id])
+
+  @@id([assessmentId, competencyId])
+  @@map("assessment_competencies")
+}
+
+model AssessmentResult {
+  id           String           @id @default(uuid()) @db.Uuid
+  assessmentId String           @map("assessment_id") @db.Uuid
+  assessment   Assessment       @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  studentId    String           @map("student_id") @db.Uuid
+  student      Student          @relation(fields: [studentId], references: [id])
+  competencyId String           @map("competency_id") @db.Uuid
+  competency   Competency       @relation(fields: [competencyId], references: [id])
+  status       AssessmentStatus @default(NOT_EVALUATED)
+  comment      String?          @db.Text
+  createdAt    DateTime         @default(now()) @map("created_at")
+  updatedAt    DateTime         @updatedAt @map("updated_at")
+
+  @@unique([assessmentId, studentId, competencyId])
+  @@map("assessment_results")
 }

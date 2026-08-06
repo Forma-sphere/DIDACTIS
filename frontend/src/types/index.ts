@@ -236,6 +236,43 @@ export interface Resource {
   updatedAt: string;
 }
 
+export type AssessmentStatus = 'NOT_EVALUATED' | 'IN_PROGRESS' | 'ACQUIRED' | 'EXCEEDED';
+
+export interface AssessmentCompetency {
+  competencyId: string;
+  competency: { id: string; code: string; name: string; domain: string };
+}
+
+export interface AssessmentResult {
+  id: string;
+  assessmentId: string;
+  studentId: string;
+  student: { id: string; firstName: string; lastName: string };
+  competencyId: string;
+  competency: { id: string; code: string; name: string; domain: string };
+  status: AssessmentStatus;
+  comment: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Assessment {
+  id: string;
+  classId: string;
+  class?: {
+    id: string; name: string; level: Level; cycle: Cycle;
+    teacher?: { id: string; firstName: string; lastName: string };
+  };
+  title: string;
+  description: string | null;
+  date: string;
+  competencies: AssessmentCompetency[];
+  results: AssessmentResult[];
+  isArchived: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ClassItem {
   id: string;
   name: string;
