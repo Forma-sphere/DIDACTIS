@@ -15,6 +15,7 @@ import { ResourcesModule } from './resources/resources.module';
 import { AssessmentsModule } from './assessments/assessments.module';
 import { DocumentsModule } from './documents/documents.module';
 import { AiModule } from './ai/ai.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
@@ -40,6 +41,7 @@ import { join } from 'path';
     AssessmentsModule,
     DocumentsModule,
     AiModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}

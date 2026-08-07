@@ -317,6 +317,55 @@ export interface ConversationListItem {
   updatedAt: string;
 }
 
+export type ActivityType = 'LESSON' | 'SEQUENCE' | 'PROGRESSION' | 'ASSESSMENT';
+
+export interface DashboardActiveClass {
+  id: string;
+  name: string;
+  level: Level;
+  cycle: Cycle;
+  studentCount: number;
+  school: { id: string; name: string };
+  schoolYear: { id: string; name: string; isCurrent: boolean };
+}
+
+export interface DashboardScheduleItem {
+  lessonId: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+  duration: number;
+  sequence: { id: string; title: string } | null;
+  className: string;
+}
+
+export interface DashboardActivity {
+  id: string;
+  title: string;
+  type: ActivityType;
+  updatedAt: string;
+}
+
+export interface DashboardNotification {
+  type: string;
+  message: string;
+}
+
+export interface DashboardShortcut {
+  label: string;
+  path: string;
+  icon: string;
+}
+
+export interface DashboardData {
+  user: { firstName: string; lastName: string; role: string };
+  activeClass: DashboardActiveClass | null;
+  todaySchedule: DashboardScheduleItem[];
+  recentActivities: DashboardActivity[];
+  notifications: DashboardNotification[];
+  shortcuts: DashboardShortcut[];
+}
+
 export interface ClassItem {
   id: string;
   name: string;
