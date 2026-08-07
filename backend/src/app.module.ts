@@ -17,6 +17,7 @@ import { DocumentsModule } from './documents/documents.module';
 import { AiModule } from './ai/ai.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { DirectionModule } from './direction/direction.module';
+import { SettingsModule } from './settings/settings.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
@@ -44,6 +45,7 @@ import { join } from 'path';
     AiModule,
     DashboardModule,
     DirectionModule,
+    SettingsModule,
   ],
 })
 export class AppModule {}

@@ -34,6 +34,7 @@ model User {
   classes                Class[]        @relation("ClassTeacher")
   documents              Document[]
   conversations          Conversation[]
+  preference             UserPreference?
 
   @@map("users")
 }
@@ -479,4 +480,28 @@ model Project {
   updatedAt   DateTime      @updatedAt @map("updated_at")
 
   @@map("projects")
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+enum Language {
+  FR
+  EN
+}
+
+model UserPreference {
+  id                   String   @id @default(uuid()) @db.Uuid
+  userId               String   @unique @map("user_id") @db.Uuid
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  theme                Theme    @default(SYSTEM)
+  language             Language @default(FR)
+  notificationsEnabled Boolean  @default(true) @map("notifications_enabled")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  @@map("user_preferences")
 }

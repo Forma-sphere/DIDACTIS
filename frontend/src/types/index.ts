@@ -416,3 +416,40 @@ export interface ClassItem {
   createdAt: string;
   updatedAt: string;
 }
+
+export type Theme = 'LIGHT' | 'DARK' | 'SYSTEM';
+
+export type AppLanguage = 'FR' | 'EN';
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string | null;
+  role: Role;
+  school?: { id: string; name: string } | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UserPreferences {
+  theme: Theme;
+  language: AppLanguage;
+  notificationsEnabled: boolean;
+}
+
+export interface SecurityInfo {
+  id: string;
+  email: string;
+  emailVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AccessInfo {
+  role: Role;
+  email: string;
+  isActive: boolean;
+  permissions: string[];
+}
