@@ -366,6 +366,40 @@ export interface DashboardData {
   shortcuts: DashboardShortcut[];
 }
 
+export type ProjectStatus = 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+
+export interface Meeting {
+  id: string;
+  schoolId: string;
+  school?: { id: string; name: string };
+  title: string;
+  description: string | null;
+  date: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Project {
+  id: string;
+  schoolId: string;
+  school?: { id: string; name: string };
+  title: string;
+  description: string | null;
+  status: ProjectStatus;
+  startDate: string;
+  endDate: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DirectionDashboard {
+  classCount: number;
+  studentCount: number;
+  teacherCount: number;
+  assessmentCount: number;
+  lessonCount: number;
+}
+
 export interface ClassItem {
   id: string;
   name: string;
