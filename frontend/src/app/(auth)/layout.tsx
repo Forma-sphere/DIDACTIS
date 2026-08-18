@@ -6,7 +6,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-accent-500 text-xl font-bold text-white">
             D
           </div>
-          <h1 className="text-2xl font-bold text-primary-900">Didactis</h1>
+          <h1 className="text-2xl font-bold text-primary-900">Didactys</h1>
           <p className="text-sm text-gray-500">L&apos;allié de votre pédagogie</p>
         </div>
         {children}

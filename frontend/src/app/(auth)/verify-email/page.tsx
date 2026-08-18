@@ -51,7 +51,7 @@ export default function VerifyEmailPage() {
             <h2 className="text-lg font-semibold text-primary-900">E-mail vérifié</h2>
             <p className="text-sm text-gray-600">{message}</p>
             <Link href="/dashboard">
-              <Button className="w-full">Accéder à Didactis</Button>
+              <Button className="w-full">Accéder à Didactys</Button>
             </Link>
           </>
         )}

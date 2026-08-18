@@ -92,7 +92,7 @@ export class AiService {
     const msg = userMessage.toLowerCase();
 
     if (msg.includes('bonjour') || msg.includes('salut') || msg.includes('hello')) {
-      return 'Bonjour ! Je suis l\'assistant pédagogique Didactis. Comment puis-je vous aider aujourd\'hui ? Je peux vous accompagner sur vos préparations, séquences, progressions, évaluations ou tout autre aspect de votre enseignement.';
+      return 'Bonjour ! Je suis l\'assistant pédagogique Didactys. Comment puis-je vous aider aujourd\'hui ? Je peux vous accompagner sur vos préparations, séquences, progressions, évaluations ou tout autre aspect de votre enseignement.';
     }
 
     if (msg.includes('préparation') || msg.includes('leçon') || msg.includes('séance')) {
@@ -119,6 +119,6 @@ export class AiService {
       return 'Je vous en prie ! N\'hésitez pas à revenir vers moi si vous avez d\'autres questions. Bonne continuation dans vos préparations !';
     }
 
-    return 'Je suis l\'assistant pédagogique Didactis. Je peux vous aider sur les sujets suivants :\n\n• Préparations de séances\n• Construction de séquences\n• Élaboration de progressions\n• Évaluation des compétences\n• Différenciation pédagogique\n• Gestion de classe\n\nPosez-moi votre question et je ferai de mon mieux pour vous accompagner.\n\n_Note : lorsqu\'un fournisseur d\'IA sera configuré, les réponses seront générées par intelligence artificielle._';
+    return 'Je suis l\'assistant pédagogique Didactys. Je peux vous aider sur les sujets suivants :\n\n• Préparations de séances\n• Construction de séquences\n• Élaboration de progressions\n• Évaluation des compétences\n• Différenciation pédagogique\n• Gestion de classe\n\nPosez-moi votre question et je ferai de mon mieux pour vous accompagner.\n\n_Note : lorsqu\'un fournisseur d\'IA sera configuré, les réponses seront générées par intelligence artificielle._';
   }
 }

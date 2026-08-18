@@ -393,7 +393,7 @@ function SettingsTab() {
         <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <dt className="text-xs font-medium uppercase text-gray-500">Modèle utilisé</dt>
-            <dd className="mt-1 text-sm text-primary-900">Assistant pédagogique Didactis</dd>
+            <dd className="mt-1 text-sm text-primary-900">Assistant pédagogique Didactys</dd>
           </div>
           <div>
             <dt className="text-xs font-medium uppercase text-gray-500">Température</dt>
