@@ -8,3 +8,5 @@ dist/
 coverage/
 .turbo/
 .vercel/
+backend/uploads/*
+!backend/uploads/.gitkeep

@@ -1,0 +1,507 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  DIRECTOR
+  TEACHER
+}
+
+model User {
+  id                     String         @id @default(uuid()) @db.Uuid
+  email                  String         @unique
+  password               String
+  firstName              String         @map("first_name")
+  lastName               String         @map("last_name")
+  phone                  String?
+  role                   Role           @default(TEACHER)
+  schoolId               String?        @map("school_id") @db.Uuid
+  school                 School?        @relation(fields: [schoolId], references: [id])
+  isActive               Boolean        @default(true) @map("is_active")
+  emailVerified          Boolean        @default(false) @map("email_verified")
+  emailVerificationToken String?        @map("email_verification_token")
+  passwordResetToken     String?        @map("password_reset_token")
+  passwordResetExpires   DateTime?      @map("password_reset_expires")
+  createdAt              DateTime       @default(now()) @map("created_at")
+  updatedAt              DateTime       @updatedAt @map("updated_at")
+  refreshTokens          RefreshToken[]
+  classes                Class[]        @relation("ClassTeacher")
+  documents              Document[]
+  conversations          Conversation[]
+  preference             UserPreference?
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  token     String   @unique
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("refresh_tokens")
+}
+
+enum SchoolType {
+  MATERNELLE
+  ELEMENTAIRE
+  PRIMAIRE
+}
+
+model School {
+  id          String       @id @default(uuid()) @db.Uuid
+  name        String
+  address     String?
+  city        String?
+  postalCode  String?      @map("postal_code")
+  phone       String?
+  email       String?
+  uaiCode     String?      @unique @map("uai_code")
+  type        SchoolType   @default(ELEMENTAIRE)
+  isArchived  Boolean      @default(false) @map("is_archived")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  schoolYears  SchoolYear[]
+  users        User[]
+  classes      Class[]
+  students     Student[]
+  progressions Progression[]
+  meetings     Meeting[]
+  projects     Project[]
+
+  @@map("schools")
+}
+
+model SchoolYear {
+  id        String   @id @default(uuid()) @db.Uuid
+  schoolId  String   @map("school_id") @db.Uuid
+  school    School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  name      String
+  startDate DateTime @map("start_date") @db.Date
+  endDate   DateTime @map("end_date") @db.Date
+  isCurrent Boolean  @default(false) @map("is_current")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  periods      Period[]
+  classes      Class[]
+  progressions Progression[]
+
+  @@map("school_years")
+}
+
+model Period {
+  id           String     @id @default(uuid()) @db.Uuid
+  schoolYearId String     @map("school_year_id") @db.Uuid
+  schoolYear   SchoolYear @relation(fields: [schoolYearId], references: [id], onDelete: Cascade)
+  name         String
+  startDate    DateTime   @map("start_date") @db.Date
+  endDate      DateTime   @map("end_date") @db.Date
+  order        Int
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@map("periods")
+}
+
+enum Gender {
+  M
+  F
+}
+
+enum Level {
+  TPS
+  PS
+  MS
+  GS
+  CP
+  CE1
+  CE2
+  CM1
+  CM2
+}
+
+enum Cycle {
+  CYCLE_1
+  CYCLE_2
+  CYCLE_3
+}
+
+model Class {
+  id           String     @id @default(uuid()) @db.Uuid
+  schoolId     String     @map("school_id") @db.Uuid
+  school       School     @relation(fields: [schoolId], references: [id])
+  schoolYearId String     @map("school_year_id") @db.Uuid
+  schoolYear   SchoolYear @relation(fields: [schoolYearId], references: [id])
+  teacherId    String     @map("teacher_id") @db.Uuid
+  teacher      User       @relation("ClassTeacher", fields: [teacherId], references: [id])
+  name         String
+  level        Level
+  cycle        Cycle
+  capacity     Int        @default(30)
+  isArchived   Boolean       @default(false) @map("is_archived")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  students     Student[]
+  progressions Progression[]
+  lessons      Lesson[]
+  journalDays  JournalDay[]
+  assessments  Assessment[]
+
+  @@map("classes")
+}
+
+model Student {
+  id         String   @id @default(uuid()) @db.Uuid
+  schoolId   String   @map("school_id") @db.Uuid
+  school     School   @relation(fields: [schoolId], references: [id])
+  classId    String   @map("class_id") @db.Uuid
+  class      Class    @relation(fields: [classId], references: [id])
+  firstName  String   @map("first_name")
+  lastName   String   @map("last_name")
+  birthDate  DateTime @map("birth_date") @db.Date
+  gender     Gender
+  isArchived        Boolean            @default(false) @map("is_archived")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  assessmentResults AssessmentResult[]
+
+  @@map("students")
+}
+
+model Competency {
+  id          String                  @id @default(uuid()) @db.Uuid
+  code        String                  @unique
+  name        String
+  domain      String
+  description String?                 @db.Text
+  isArchived  Boolean                 @default(false) @map("is_archived")
+  createdAt   DateTime                @default(now()) @map("created_at")
+  updatedAt   DateTime                @updatedAt @map("updated_at")
+  progressions ProgressionCompetency[]
+  sequences    SequenceCompetency[]
+  lessons      LessonCompetency[]
+  assessments  AssessmentCompetency[]
+  assessmentResults AssessmentResult[]
+
+  @@map("competencies")
+}
+
+model Progression {
+  id           String                  @id @default(uuid()) @db.Uuid
+  schoolId     String                  @map("school_id") @db.Uuid
+  school       School                  @relation(fields: [schoolId], references: [id])
+  classId      String                  @map("class_id") @db.Uuid
+  class        Class                   @relation(fields: [classId], references: [id])
+  schoolYearId String                  @map("school_year_id") @db.Uuid
+  schoolYear   SchoolYear              @relation(fields: [schoolYearId], references: [id])
+  title        String
+  description  String?                 @db.Text
+  isArchived   Boolean                 @default(false) @map("is_archived")
+  createdAt    DateTime                @default(now()) @map("created_at")
+  updatedAt    DateTime                @updatedAt @map("updated_at")
+  competencies ProgressionCompetency[]
+  sequences    Sequence[]
+
+  @@map("progressions")
+}
+
+model ProgressionCompetency {
+  progressionId String     @map("progression_id") @db.Uuid
+  progression   Progression @relation(fields: [progressionId], references: [id], onDelete: Cascade)
+  competencyId  String     @map("competency_id") @db.Uuid
+  competency    Competency @relation(fields: [competencyId], references: [id])
+  order         Int        @default(0)
+
+  @@id([progressionId, competencyId])
+  @@map("progression_competencies")
+}
+
+model Sequence {
+  id            String               @id @default(uuid()) @db.Uuid
+  progressionId String               @map("progression_id") @db.Uuid
+  progression   Progression          @relation(fields: [progressionId], references: [id])
+  title         String
+  description   String?              @db.Text
+  order         Int                  @default(0)
+  isArchived    Boolean              @default(false) @map("is_archived")
+  createdAt     DateTime             @default(now()) @map("created_at")
+  updatedAt     DateTime             @updatedAt @map("updated_at")
+  competencies  SequenceCompetency[]
+  lessons       Lesson[]
+
+  @@map("sequences")
+}
+
+model SequenceCompetency {
+  sequenceId   String     @map("sequence_id") @db.Uuid
+  sequence     Sequence   @relation(fields: [sequenceId], references: [id], onDelete: Cascade)
+  competencyId String     @map("competency_id") @db.Uuid
+  competency   Competency @relation(fields: [competencyId], references: [id])
+  order        Int        @default(0)
+
+  @@id([sequenceId, competencyId])
+  @@map("sequence_competencies")
+}
+
+model Lesson {
+  id           String              @id @default(uuid()) @db.Uuid
+  sequenceId   String              @map("sequence_id") @db.Uuid
+  sequence     Sequence            @relation(fields: [sequenceId], references: [id])
+  classId      String              @map("class_id") @db.Uuid
+  class        Class               @relation(fields: [classId], references: [id])
+  title        String
+  objective    String              @db.Text
+  content      String              @db.Text
+  duration     Int
+  order        Int                 @default(0)
+  isArchived   Boolean             @default(false) @map("is_archived")
+  createdAt    DateTime            @default(now()) @map("created_at")
+  updatedAt    DateTime            @updatedAt @map("updated_at")
+  competencies LessonCompetency[]
+  journalLessons JournalLesson[]
+  resources      LessonResource[]
+
+  @@map("lessons")
+}
+
+model LessonCompetency {
+  lessonId     String     @map("lesson_id") @db.Uuid
+  lesson       Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  competencyId String     @map("competency_id") @db.Uuid
+  competency   Competency @relation(fields: [competencyId], references: [id])
+
+  @@id([lessonId, competencyId])
+  @@map("lesson_competencies")
+}
+
+model JournalDay {
+  id        String          @id @default(uuid()) @db.Uuid
+  classId   String          @map("class_id") @db.Uuid
+  class     Class           @relation(fields: [classId], references: [id])
+  date      DateTime        @db.Date
+  notes     String?         @db.Text
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+  lessons   JournalLesson[]
+
+  @@unique([classId, date])
+  @@map("journal_days")
+}
+
+model JournalLesson {
+  journalDayId String     @map("journal_day_id") @db.Uuid
+  journalDay   JournalDay @relation(fields: [journalDayId], references: [id], onDelete: Cascade)
+  lessonId     String     @map("lesson_id") @db.Uuid
+  lesson       Lesson     @relation(fields: [lessonId], references: [id])
+  startTime    String     @map("start_time")
+  endTime      String     @map("end_time")
+  order        Int        @default(0)
+
+  @@id([journalDayId, lessonId])
+  @@map("journal_lessons")
+}
+
+enum ResourceType {
+  PDF
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+  OTHER
+}
+
+model Resource {
+  id          String           @id @default(uuid()) @db.Uuid
+  title       String
+  description String?          @db.Text
+  type        ResourceType
+  filePath    String           @map("file_path")
+  tags        String[]         @default([])
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  lessons     LessonResource[]
+
+  @@map("resources")
+}
+
+model LessonResource {
+  lessonId   String   @map("lesson_id") @db.Uuid
+  lesson     Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  resourceId String   @map("resource_id") @db.Uuid
+  resource   Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@id([lessonId, resourceId])
+  @@map("lesson_resources")
+}
+
+enum AssessmentStatus {
+  NOT_EVALUATED
+  IN_PROGRESS
+  ACQUIRED
+  EXCEEDED
+}
+
+model Assessment {
+  id           String                 @id @default(uuid()) @db.Uuid
+  classId      String                 @map("class_id") @db.Uuid
+  class        Class                  @relation(fields: [classId], references: [id])
+  title        String
+  description  String?                @db.Text
+  date         DateTime               @db.Date
+  isArchived   Boolean                @default(false) @map("is_archived")
+  createdAt    DateTime               @default(now()) @map("created_at")
+  updatedAt    DateTime               @updatedAt @map("updated_at")
+  competencies AssessmentCompetency[]
+  results      AssessmentResult[]
+
+  @@map("assessments")
+}
+
+model AssessmentCompetency {
+  assessmentId String     @map("assessment_id") @db.Uuid
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  competencyId String     @map("competency_id") @db.Uuid
+  competency   Competency @relation(fields: [competencyId], references: [id])
+
+  @@id([assessmentId, competencyId])
+  @@map("assessment_competencies")
+}
+
+model AssessmentResult {
+  id           String           @id @default(uuid()) @db.Uuid
+  assessmentId String           @map("assessment_id") @db.Uuid
+  assessment   Assessment       @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  studentId    String           @map("student_id") @db.Uuid
+  student      Student          @relation(fields: [studentId], references: [id])
+  competencyId String           @map("competency_id") @db.Uuid
+  competency   Competency       @relation(fields: [competencyId], references: [id])
+  status       AssessmentStatus @default(NOT_EVALUATED)
+  comment      String?          @db.Text
+  createdAt    DateTime         @default(now()) @map("created_at")
+  updatedAt    DateTime         @updatedAt @map("updated_at")
+
+  @@unique([assessmentId, studentId, competencyId])
+  @@map("assessment_results")
+}
+
+enum DocumentType {
+  PDF
+  WORD
+}
+
+enum SourceModule {
+  LESSON
+  SEQUENCE
+  PROGRESSION
+  JOURNAL
+  ASSESSMENT
+}
+
+model Document {
+  id           String       @id @default(uuid()) @db.Uuid
+  title        String
+  type         DocumentType
+  sourceModule SourceModule @map("source_module")
+  sourceId     String       @map("source_id") @db.Uuid
+  filePath     String       @map("file_path")
+  createdById  String       @map("created_by_id") @db.Uuid
+  createdBy    User         @relation(fields: [createdById], references: [id])
+  createdAt    DateTime     @default(now()) @map("created_at")
+
+  @@map("documents")
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+}
+
+model Conversation {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  messages  Message[]
+
+  @@map("conversations")
+}
+
+model Message {
+  id             String       @id @default(uuid()) @db.Uuid
+  conversationId String       @map("conversation_id") @db.Uuid
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           MessageRole
+  content        String       @db.Text
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  @@map("messages")
+}
+
+enum ProjectStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model Meeting {
+  id          String   @id @default(uuid()) @db.Uuid
+  schoolId    String   @map("school_id") @db.Uuid
+  school      School   @relation(fields: [schoolId], references: [id])
+  title       String
+  description String?  @db.Text
+  date        DateTime @db.Date
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("meetings")
+}
+
+model Project {
+  id          String        @id @default(uuid()) @db.Uuid
+  schoolId    String        @map("school_id") @db.Uuid
+  school      School        @relation(fields: [schoolId], references: [id])
+  title       String
+  description String?       @db.Text
+  status      ProjectStatus @default(PLANNED)
+  startDate   DateTime      @map("start_date") @db.Date
+  endDate     DateTime?     @map("end_date") @db.Date
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  @@map("projects")
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+enum Language {
+  FR
+  EN
+}
+
+model UserPreference {
+  id                   String   @id @default(uuid()) @db.Uuid
+  userId               String   @unique @map("user_id") @db.Uuid
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  theme                Theme    @default(SYSTEM)
+  language             Language @default(FR)
+  notificationsEnabled Boolean  @default(true) @map("notifications_enabled")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  @@map("user_preferences")
+}

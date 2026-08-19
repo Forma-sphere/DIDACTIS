@@ -6,7 +6,7 @@ import { AuthProvider } from '@/hooks/useAuth';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Didactis — L\'allié de votre pédagogie',
+  title: 'Didactys — L\'allié de votre pédagogie',
   description: 'Plateforme SaaS pour les enseignants du premier degré',
 };
 

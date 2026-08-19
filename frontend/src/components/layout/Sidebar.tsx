@@ -37,7 +37,7 @@ export function Sidebar() {
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-500 text-white font-bold text-sm">
           D
         </div>
-        <span className="text-lg font-bold text-primary-900">Didactis</span>
+        <span className="text-lg font-bold text-primary-900">Didactys</span>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-4">

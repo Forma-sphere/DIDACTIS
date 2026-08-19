@@ -19,7 +19,7 @@ async function bootstrap() {
 
   const port = process.env.BACKEND_PORT || 4000;
   await app.listen(port);
-  logger.log(`Didactis API running on port ${port}`);
+  logger.log(`Didactys API running on port ${port}`);
 }
 
 bootstrap();
