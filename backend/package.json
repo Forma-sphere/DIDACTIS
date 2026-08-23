@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "prisma generate && nest build",
+    "build": "prisma generate && tsc -p tsconfig.build.json",
     "postinstall": "prisma generate",
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "start:prod": "prisma migrate deploy && node prisma/seed.js && node dist/main",
+    "start:prod": "prisma migrate deploy && node dist/src/main",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
